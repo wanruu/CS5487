@@ -1,7 +1,8 @@
+import torch
 import scipy.io
 from torch.utils.data import Dataset
 
-
+# For pytorch.
 class MyDataset(Dataset):
     def __init__(self, filepath, filetype="mat", train=True, cross_idx=0):
         # Read data from mat file.
@@ -20,7 +21,7 @@ class MyDataset(Dataset):
             self.labels = labels[:,testset]  # (1,2000)
 
     def __getitem__(self, index):
-        return self.imgs[:,index], self.labels[:,index]
+        return torch.Tensor(self.imgs[:,index]), torch.LongTensor(self.labels[:,index])
 
     def __len__(self):
         return self.labels.shape[1]
@@ -33,3 +34,4 @@ if __name__ == "__main__":
     test_cross_1 = MyDataset(DIGITS_MAT_PATH, "mat", False, 0)
     train_cross_2 = MyDataset(DIGITS_MAT_PATH, "mat", True, 1)
     test_cross_2 = MyDataset(DIGITS_MAT_PATH, "mat", False, 1)
+    print(train_cross_1[0])
