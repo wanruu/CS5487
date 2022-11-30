@@ -11,7 +11,7 @@ from utils import get_device
 from data import MyDataset
 from config import DIGITS_MAT_PATH
 from cnn_models import EarlyStopping
-from cnn_models import CNN_1 as CNN
+from cnn_models import CNN_2 as CNN
 
 
 def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learning_rate=0.01,
@@ -74,8 +74,6 @@ def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learnin
         if early_stopping.flag:
             print(f"Early stop at epoch {epoch}.")
             break
-
-
 
 
 def test(model, dataset, device="cpu", batch_size=32, num_workers=0):
