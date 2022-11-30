@@ -78,7 +78,7 @@ class CNN_2(nn.Module):
             nn.MaxPool2d(kernel_size=2),
         )
         self.flatten = nn.Flatten()
-        self.fc = nn.Linear(12544, 10)
+        self.fc = nn.Linear(576, 10)
 
     def forward(self, input):
         out = self.conv1(input)

@@ -11,7 +11,7 @@ from utils import get_device
 from data import MyDataset
 from config import DIGITS_MAT_PATH
 from cnn_models import EarlyStopping
-from cnn_models import CNN_1 as CNN
+from cnn_models import CNN_2 as CNN
 
 
 def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learning_rate=0.01,
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     train_dataset = MyDataset(DIGITS_MAT_PATH, "mat", True, 0)
     test_dataset = MyDataset(DIGITS_MAT_PATH, "mat", False, 0)
     # Parameter
-    epochs = 100
+    epochs = 50
     batch_size = 32
     device = get_device()
     learning_rate = 0.01
