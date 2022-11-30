@@ -49,17 +49,17 @@ class CNN_3(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         self.conv1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2, 2)
         )
         self.conv2 = nn.Sequential(
-            nn.Conv2d(in_channels=32, out_channels=64,  kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=32, out_channels=64,  kernel_size=5, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2, 2)
         )
         self.conv3 = nn.Sequential(
-            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=5, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2, 2)
         )

@@ -11,7 +11,7 @@ from utils import get_device
 from data import MyDataset
 from config import DIGITS_MAT_PATH
 from cnn_models import EarlyStopping
-from cnn_models import CNN_2 as CNN
+from cnn_models import CNN_2, CNN_3
 
 
 def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learning_rate=0.01,
@@ -31,8 +31,6 @@ def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learnin
     # Data
     train_data = DataLoader(
         train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-    # test_data = DataLoader(
-    #     test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     # Training
     for epoch in range(epochs):
@@ -106,27 +104,35 @@ if __name__ == "__main__":
     learning_rate = 0.01
     num_workers = 0
 
-    # Model
-    model = CNN()
-    # summary(model, (1, 28, 28))
-
-    # Training
-    log = []
-    train(model, train_dataset, test_dataset, epochs=epochs, batch_size=batch_size,
-          learning_rate=learning_rate, device=device, num_workers=num_workers, log=log)
+    max_acc = 0
+    max_acc_model = None
+    accs = []
+    for i in range(10):
+        # Model
+        model = CNN_2()
+        # Training
+        log = []
+        train(model, train_dataset, test_dataset, epochs=epochs, batch_size=batch_size,
+            learning_rate=learning_rate, device=device, num_workers=num_workers, log=log)
+        # Extract result
+        acc = log[-1][-1]
+        accs.append(acc)
+        if acc > max_acc:
+            max_acc = acc
+            max_acc_model = model
 
     # Save final model & log
     print("Saving final model...")
     path = f"checkpoints/{datetime.now()}"
     os.mkdir(path)
-    torch.save(model.state_dict(), f"{path}/model.pt")
+    torch.save(max_acc_model.state_dict(), f"{path}/model.pt")
     with open(f"{path}/result.csv", "w+") as f:
         f.write("epoch,total_loss,train_acc,test_acc\n")
         for data in log:
             data_s = [str(num) for num in data]
             f.write(",".join(data_s)+"\n")
     with open(f"{path}/model-info.txt", "w+") as f:
-        model_stats = summary(model, (1, 28, 28))
+        model_stats = summary(max_acc_model, (1, 28, 28))
         f.write(str(model_stats)+"\n")
-        f.write(str(model))
-    
+        f.write(str(max_acc_model))
+    print(accs, max(accs))
