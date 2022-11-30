@@ -7,65 +7,11 @@ from datetime import datetime
 from torchsummary import summary  # pip install torch-summary
 from torch.utils.data import DataLoader
 
-from utils import get_device, accuracy
+from utils import get_device
 from data import MyDataset
 from config import DIGITS_MAT_PATH
-
-class EarlyStopping:
-    def __init__(self, patience=30, min_delta=0):
-        """
-        params patience : early stop only if epoches of no improvement >= patience.
-        params min_delta: an absolute change of less than min_delta, will count as no improvement.
-        """
-        self.patience = patience
-        self.min_delta = min_delta
-        self.min_loss = float("inf")
-        self.cnt = 0
-        self.flag = False
-
-    def __call__(self, loss):
-        if (self.min_loss - loss) < self.min_delta:
-            self.cnt += 1
-        else:
-            self.min_loss = loss
-            self.cnt = 0
-        if self.cnt >= self.patience:
-            self.flag = True
-
-
-class CNN(nn.Module):
-    def __init__(self) -> None:
-        super().__init__()
-        self.conv1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=32,
-                      kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
-        )
-        self.conv2 = nn.Sequential(
-            nn.Conv2d(in_channels=32, out_channels=64,
-                      kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
-        )
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv3 = nn.Sequential(
-            nn.Conv2d(in_channels=64, out_channels=64,
-                      kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
-        )
-        self.flatten = nn.Flatten()
-        self.fc = nn.Linear(12544, 10)
-
-        # model.add(layers.Dense(64, activation='relu'))
-        # model.add(layers.Dense(10, activation='softmax'))
-
-    def forward(self, input):
-        out = self.conv1(input)
-        out = self.conv2(out)
-        out = self.pool(out)
-        out = self.conv3(out)
-        out = self.flatten(out)
-        out = self.fc(out)
-        return out
+from cnn_models import EarlyStopping
+from cnn_models import CNN_1 as CNN
 
 
 def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learning_rate=0.01,
@@ -133,8 +79,8 @@ def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learnin
     # Save final model & log
     print("Saving final model...")
     t = datetime.now()
-    torch.save(model.state_dict(), f"checkpoints/cnn-{t}.pt")
-    with open(f"checkpoints/cnn-{t}.csv", "w+") as f:
+    torch.save(model.state_dict(), f"checkpoints/{model.name}-{t}.pt")
+    with open(f"checkpoints/{model.name}-{t}.csv", "w+") as f:
         f.write("epoch,total_loss,train_acc,test_acc\n")
         for data in log:
             data_s = [str(num) for num in data]
@@ -164,7 +110,7 @@ if __name__ == "__main__":
     train_dataset = MyDataset(DIGITS_MAT_PATH, "mat", True, 0)
     test_dataset = MyDataset(DIGITS_MAT_PATH, "mat", False, 0)
     # Parameter
-    epochs = 500
+    epochs = 100
     batch_size = 32
     device = get_device()
     learning_rate = 0.01
