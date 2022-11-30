@@ -21,7 +21,7 @@ class MyDataset(Dataset):
             self.labels = labels[:,testset]  # (1,2000)
 
     def __getitem__(self, index):
-        img = torch.Tensor(self.imgs[:,index].reshape(28, 28))
+        img = torch.Tensor(self.imgs[:,index].reshape(-1, 28, 28))
         label = torch.LongTensor(self.labels[:,index])
         return img, label
 
