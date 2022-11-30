@@ -109,7 +109,7 @@ if __name__ == "__main__":
     accs = []
     for i in range(10):
         # Model
-        model = CNN_2()
+        model = CNN_3()
         # Training
         log = []
         train(model, train_dataset, test_dataset, epochs=epochs, batch_size=batch_size,

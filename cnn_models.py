@@ -64,7 +64,7 @@ class CNN_3(nn.Module):
             nn.MaxPool2d(2, 2)
         )
         self.flatten = nn.Flatten()
-        self.fc = nn.Linear(576, 10)
+        self.fc = nn.Linear(64, 10)
 
     def forward(self, input):
         out = self.conv1(input)
@@ -77,5 +77,5 @@ class CNN_3(nn.Module):
 
 if __name__ == "__main__":
     from torchsummary import summary 
-    model = CNN_2()
+    model = CNN_3()
     summary(model, (1, 28, 28))
