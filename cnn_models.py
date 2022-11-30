@@ -29,26 +29,27 @@ class CNN_1(nn.Module):
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32,
                       kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2)
         )
         self.conv2 = nn.Sequential(
             nn.Conv2d(in_channels=32, out_channels=64,
                       kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2)
         )
-        self.pool = nn.MaxPool2d(2, 2)
         self.conv3 = nn.Sequential(
             nn.Conv2d(in_channels=64, out_channels=64,
                       kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2)
         )
         self.flatten = nn.Flatten()
-        self.fc = nn.Linear(12544, 10)
+        self.fc = nn.Linear(576, 10)
 
     def forward(self, input):
         out = self.conv1(input)
         out = self.conv2(out)
-        out = self.pool(out)
         out = self.conv3(out)
         out = self.flatten(out)
         out = self.fc(out)
@@ -60,19 +61,19 @@ class CNN_2(nn.Module):
         super().__init__()
         self.name = "cnn_2"
         self.conv1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=10,
+            nn.Conv2d(in_channels=1, out_channels=32,
                       kernel_size=5, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2, 2)
         )
         self.conv2 = nn.Sequential(
-            nn.Conv2d(in_channels=10, out_channels=20,
+            nn.Conv2d(in_channels=32, out_channels=64,
                       kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2, 2)
         )
         self.flatten = nn.Flatten()
-        self.fc = nn.Linear(720, 10)
+        self.fc = nn.Linear(2304, 10)
 
     def forward(self, input):
         out = self.conv1(input)
@@ -83,5 +84,5 @@ class CNN_2(nn.Module):
 
 if __name__ == "__main__":
     from torchsummary import summary 
-    model = CNN_2()
+    model = CNN_1()
     summary(model, (1, 28, 28))

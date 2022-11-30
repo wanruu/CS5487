@@ -11,11 +11,11 @@ from utils import get_device
 from data import MyDataset
 from config import DIGITS_MAT_PATH
 from cnn_models import EarlyStopping
-from cnn_models import CNN_2 as CNN
+from cnn_models import CNN_1 as CNN
 
 
 def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learning_rate=0.01,
-          device="cpu", loss_func=None, optimizer=None, early_stopping=None, num_workers=0):
+          device="cpu", loss_func=None, optimizer=None, early_stopping=None, num_workers=0, log=[]):
     print("Starting training...")
     # Prepare
     if not loss_func:
@@ -25,7 +25,6 @@ def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learnin
     if not early_stopping:
         early_stopping = EarlyStopping(patience=30, min_delta=0)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, verbose=True)
-    log = []
     model.to(device)
     model.train()
 
@@ -76,19 +75,7 @@ def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learnin
             print(f"Early stop at epoch {epoch}.")
             break
 
-    # Save final model & log
-    print("Saving final model...")
-    path = f"checkpoints/{datetime.now()}"
-    os.mkdir(path)
-    torch.save(model.state_dict(), f"{path}/model.pt")
-    with open(f"{path}/result.csv", "w+") as f:
-        f.write("epoch,total_loss,train_acc,test_acc\n")
-        for data in log:
-            data_s = [str(num) for num in data]
-            f.write(",".join(data_s)+"\n")
-    with open(f"{path}/model-info.txt", "w+") as f:
-        model_stats = summary(model, (1, 28, 28))
-        f.write(str(model_stats))
+
 
 
 def test(model, dataset, device="cpu", batch_size=32, num_workers=0):
@@ -113,16 +100,35 @@ if __name__ == "__main__":
     # Dataset
     train_dataset = MyDataset(DIGITS_MAT_PATH, "mat", True, 0)
     test_dataset = MyDataset(DIGITS_MAT_PATH, "mat", False, 0)
+
     # Parameter
     epochs = 50
     batch_size = 32
     device = get_device()
     learning_rate = 0.01
     num_workers = 0
+
     # Model
     model = CNN()
     # summary(model, (1, 28, 28))
+
     # Training
+    log = []
     train(model, train_dataset, test_dataset, epochs=epochs, batch_size=batch_size,
-          learning_rate=learning_rate, device=device, num_workers=num_workers)
+          learning_rate=learning_rate, device=device, num_workers=num_workers, log=log)
+
+    # Save final model & log
+    print("Saving final model...")
+    path = f"checkpoints/{datetime.now()}"
+    os.mkdir(path)
+    torch.save(model.state_dict(), f"{path}/model.pt")
+    with open(f"{path}/result.csv", "w+") as f:
+        f.write("epoch,total_loss,train_acc,test_acc\n")
+        for data in log:
+            data_s = [str(num) for num in data]
+            f.write(",".join(data_s)+"\n")
+    with open(f"{path}/model-info.txt", "w+") as f:
+        model_stats = summary(model, (1, 28, 28))
+        f.write(str(model_stats)+"\n")
+        f.write(str(model))
     
