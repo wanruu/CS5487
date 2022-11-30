@@ -1,4 +1,4 @@
-import csv
+import os
 import tqdm
 import torch
 import numpy as np
@@ -78,13 +78,17 @@ def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learnin
 
     # Save final model & log
     print("Saving final model...")
-    t = datetime.now()
-    torch.save(model.state_dict(), f"checkpoints/{model.name}-{t}.pt")
-    with open(f"checkpoints/{model.name}-{t}.csv", "w+") as f:
+    path = f"checkpoints/{datetime.now()}"
+    os.mkdir(path)
+    torch.save(model.state_dict(), f"{path}/model.pt")
+    with open(f"{path}/result.csv", "w+") as f:
         f.write("epoch,total_loss,train_acc,test_acc\n")
         for data in log:
             data_s = [str(num) for num in data]
             f.write(",".join(data_s)+"\n")
+    with open(f"{path}/model-info.txt", "w+") as f:
+        model_stats = summary(model, (1, 28, 28))
+        f.write(str(model_stats))
 
 
 def test(model, dataset, device="cpu", batch_size=32, num_workers=0):
@@ -117,7 +121,7 @@ if __name__ == "__main__":
     num_workers = 0
     # Model
     model = CNN()
-    summary(model, (1, 28, 28))
+    # summary(model, (1, 28, 28))
     # Training
     train(model, train_dataset, test_dataset, epochs=epochs, batch_size=batch_size,
           learning_rate=learning_rate, device=device, num_workers=num_workers)
