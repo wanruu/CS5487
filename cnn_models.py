@@ -59,21 +59,17 @@ class CNN_2(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         self.name = "cnn_2"
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.mp = nn.MaxPool2d(2)
-
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=10,
                       kernel_size=5, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
+            nn.MaxPool2d(2, 2)
         )
         self.conv2 = nn.Sequential(
             nn.Conv2d(in_channels=10, out_channels=20,
                       kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
+            nn.MaxPool2d(2, 2)
         )
         self.flatten = nn.Flatten()
         self.fc = nn.Linear(720, 10)
