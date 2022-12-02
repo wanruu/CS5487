@@ -1,3 +1,5 @@
 .gitignore
 checkpoints/*
 __pycache__/*.pyc
+cross_valid/*
+cross_valid-trial2/*

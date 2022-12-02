@@ -11,7 +11,7 @@ from utils import get_device
 from data import MyDataset
 from config import DIGITS_MAT_PATH
 from cnn_models import EarlyStopping
-from cnn_models import CNN_2, CNN_3
+from cnn_models import CNN_1, CNN_2, CNN_3
 
 
 def train(model, train_dataset, test_dataset, epochs=200, batch_size=32, learning_rate=0.01,
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     accs = []
     for i in range(10):
         # Model
-        model = CNN_3()
+        model = CNN_2(dropout=0.3)
         # Training
         log = []
         train(model, train_dataset, test_dataset, epochs=epochs, batch_size=batch_size,
